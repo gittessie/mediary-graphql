@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Hide, View } from "grommet-icons";
 import { Box, Form, FormField, TextInput, Button } from "grommet";
 import { Spinning } from "grommet-controls";
+import { GRAPHQL_API_ENDPOINT } from '../../constants';
 
 const Register: React.FC = () => {
   const [name, setName] = useState<string>("");
@@ -23,11 +24,34 @@ const Register: React.FC = () => {
 
   const handleRegister = async (): Promise<void> => {
     setLoading(true);
-    const response = { code: 200 };
-    if (response.code === 200) {
-      //login
-    } else {
-      setError("Invalid credentials.");
+    const requestBody = {
+      query: `
+        mutation {
+          createUser(userInput: {name: "${name}", email: "${email}", password: "${password}"}){
+            _id
+            email
+          }
+        }
+      `
+    }
+    try{
+      const response = await fetch(`${GRAPHQL_API_ENDPOINT}`, {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      setLoading(false);
+      if(!response.ok){
+        setError('Account Registration Failed. Try Again.');
+      }else{
+        const responseData = await response.json();
+        console.log(responseData);
+      }
+    }catch(e){
+      console.log(e);
+      setError(e);
     }
   };
 
@@ -42,7 +66,7 @@ const Register: React.FC = () => {
       {error && <div>{error}</div>}
       <h1>Create an Account</h1>
 
-      <Form>
+      <Form onSubmit={handleRegister}>
         <FormField htmlFor="nameInput" label="Name">
           <TextInput
             plain
@@ -64,7 +88,7 @@ const Register: React.FC = () => {
             onKeyPress={(e): void => handleKeyPress(e)}
             name="email"
             value={email}
-            type="text"
+            type="email"
           />
         </FormField>
         <br />
@@ -92,9 +116,9 @@ const Register: React.FC = () => {
           primary
           size="large"
           label={isLoading ? <Spinning kind="circle" color="active" /> : "SIGN UP"}
-          onClick={(): Promise<void> => handleRegister()}
           disabled={isButtonDisabled}
           margin='0 20px 0 0'
+          type='submit'
         />
         <Link to="/auth/login">Already have an account?</Link>
       </Form>

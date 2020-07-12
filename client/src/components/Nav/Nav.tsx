@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Heading } from "grommet";
+import { NavLink } from "react-router-dom";
+import { AppStateContext } from "../../App";
 
 const AppBar = (props: any) => (
   <Box
@@ -16,11 +18,13 @@ const AppBar = (props: any) => (
 );
 
 const Nav: React.FC = () => {
+  const { userID, logout } = useContext(AppStateContext);
   return (
     <AppBar>
       <Heading level="3" margin="none">
         Mediary
       </Heading>
+      {userID && <NavLink to="/auth/login" onClick={logout}>Sign Out</NavLink>}
     </AppBar>
   );
 };
