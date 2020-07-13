@@ -46,7 +46,7 @@ const columns = [
     ),
   },
   {
-    property: "reviewText",
+    property: "textReview",
     header: "Review",
   },
 ];
