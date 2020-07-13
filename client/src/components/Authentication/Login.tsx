@@ -51,7 +51,6 @@ const Login: React.FC = () => {
         setError("Invalid Credentials.");
       } else {
         const responseData = await response.json();
-        console.log(responseData);
         login(
           responseData.data.login.userID,
           responseData.data.login.token,

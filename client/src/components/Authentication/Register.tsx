@@ -47,7 +47,11 @@ const Register: React.FC = () => {
         setError('Account Registration Failed. Try Again.');
       }else{
         const responseData = await response.json();
-        console.log(responseData);
+        if(responseData.errors){
+          setError(`ERROR: ${responseData.errors[0].message}`);
+        }else{
+          alert("Account created!");
+        }
       }
     }catch(e){
       console.log(e);
